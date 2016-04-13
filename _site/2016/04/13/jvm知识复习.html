@@ -82,12 +82,12 @@
 
 <p>如此计算机的CPU和内存，高速缓存的工作模式可以用下图表示：</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/1398478-03a503731925ae1e.jpg" alt="pic of high speed cache memory" /></p>
+<p><img src="http://7xsyb1.com1.z0.glb.clouddn.com/1398478-03a503731925ae1e.jpg" alt="pic of high speed cache memory" /></p>
 
 <h2 id="jvm">jvm内存模型</h2>
 <p>java虚拟机的内存模型定义的访问操作与计算机的处理基本一致。java的多线程中每个线程有自己的工作内存，又共享jvm内存（main memory）；线程与内存区域进行交互时，把数据从主存拷贝到工作内存来进行工作。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/1398478-b98039f86ba848ff.jpg" alt="jvm main memory" /></p>
+<p><img src="http://7xsyb1.com1.z0.glb.clouddn.com/thumb_300854081661499_1024.jpg" alt="jvm main memory" /></p>
 
 <h3 id="section-1">程序计数器</h3>
 
@@ -111,7 +111,7 @@
 
 <p>java堆是垃圾回收管理器管理的主要区域，所以也叫做”GC堆（garbage collected heap）“，如果从内存回收的角度看，由于现在收集器基本都是采用的分代收集算法，所以Java堆中还可以细分为：新生代、老年代；再细致一点的有Eden空间、From Survivor空间、To Survivor空间等。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/1398478-7c3867a0a81d7f9f.jpg" alt="java heap" /></p>
+<p><img src="http://7xsyb1.com1.z0.glb.clouddn.com/16150211_aRgY.jpg" alt="java heap" /></p>
 
 <p>Java堆中各代分布
 Young：主要是用来存放新生的对象。</p>
@@ -150,7 +150,7 @@ Young：主要是用来存放新生的对象。</p>
 
 <p>如果使用句柄访问方式，Java堆中将会划分出一块内存来作为句柄池，reference中存储的就是对象的句柄地址，而句柄中包含了对象实例数据和类型数据各自的具体地址信息，如下图所示。</p>
 
-<p><img src="http://upload-images.jianshu.io/upload_images/1398478-e926c1062b6516b3.jpg" alt="" /></p>
+<p><img src="http://7xsyb1.com1.z0.glb.clouddn.com/300854449949413.jpg" alt="" /></p>
 
 <p>这两种对象的访问方式各有优势，使用句柄访问方式的最大好处就是reference中存储的是稳定的句柄地址，在对象被移动（垃圾收集时移动对象是非常普遍的行为）时只会改变句柄中的实例数据指针，而reference本身不需要被修改。使用直接指针访问方式的最大好处就是速度更快，它节省了一次指针定位的时间开销，由于对象的访问在Java中非常频繁，因此这类开销积少成多后也是一项非常可观的。</p>
 
