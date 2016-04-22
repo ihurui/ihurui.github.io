@@ -21,6 +21,7 @@ categories: [design, tool]
 要注意的是，ruby版本最好在2.0以上，使用gem -v查看版本，gem update --system升级版本。另外不切换ruby镜像到淘宝的话，连升级ruby版本都是不行的。
 
 
+
 	
 		
 	
