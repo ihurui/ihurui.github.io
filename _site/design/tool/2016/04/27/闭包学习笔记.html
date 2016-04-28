@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title> 闭包学习笔记 — 再次学习闭包 &raquo;  iHurui</title>
+<meta name="description" content="胡睿，个人网站，hurui,ihurui,ihurui.me
+">
+<meta name="keywords" content="">
+<link rel="canonical" href="http://wwww.ihurui.me/design/tool/2016/04/27/%E9%97%AD%E5%8C%85%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html">
+        
+
+        <link href='http://fonts.googleapis.com/css?family=Inconsolata:400,700' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="/assets/vendor/normalize-css/normalize.css">
+<link rel="stylesheet" href="/css/main.css">
+
+  <link rel="stylesheet" href="/assets/vendor/highlight/styles/solarized_dark.css">
+
+<link rel="stylesheet" href="/assets/vendor/font-awesome/css/font-awesome.css">
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <header class="header">
+    <div class="navigation">
+        <a href="/" class="logo">iHurui</a>
+
+        <ul class="menu">
+            <li class="menu__entry"><a href="/">首页</a></li>
+            <li class="menu__entry"><a href="/blog">博客</a></li>
+            <li class="menu__entry"><a href="/about">关于我</a></li>
+        </ul>
+    </div>
+
+    <ul class="social-links">
+        
+            <a href="https://github.com/ihurui" class="social-links__entry" target="_blank">
+                <i class="fa fa-github"></i>
+            </a>
+        
+
+        
+            <a href="https://weibo.com/huray" class="social-links__entry" target="_blank">
+                <i class="fa fa-weibo"></i>
+            </a>
+        
+    </ul>
+</header>
+
+            <h1 class="page-title post-title">
+    <div class="page-title__text post-title__text">闭包学习笔记</div>
+    <div class="page-title__subtitle post-title__subtitle">再次学习闭包</div>
+</h1>
+
+<div class="content">
+    <p>闭包一向是深入js时必须理解的问题，我学习过很多次，但每次都没有完全吃透，再加上很少用到，所以隔一段时间又忘记了，今天我再次系统地学习下闭包，并在自己的博客上记录下来，希望可以彻底吃透闭包。</p>
+
+<h2 id="section">什么是闭包</h2>
+<p>闭包是一种特殊的对象，由两部分组成：</p>
+
+<ul>
+  <li>函数；</li>
+  <li>创建函数时的环境。</li>
+</ul>
+
+<p>环境是由创建该函数时所在作用域的任何局部变量组成。举个栗子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	function makeFunc(){
+		var message = "hello world";
+		function showMessage(){
+			alert(message);
+		}
+	   return showMessage;
+	}
+	var func = makeFunc();
+	func();
+</code></pre>
+</div>
+
+<p>运行这段代码会弹出 <code class="highlighter-rouge">hello world</code>。<code class="highlighter-rouge">func</code>就是一个闭包，他由<code class="highlighter-rouge">showMessage</code>函数和<code class="highlighter-rouge">message</code>变量组成。
+再看一个栗子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	function makeAddFunc(a){
+		return function(b){
+			return a+b;
+		}
+	}
+	var add3 = makeAddFunc(3);
+	var add5 = makeAddFunc(5);
+	
+	alert(add3(2));//5
+	alert(add5(2));//7
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">add3</code>和<code class="highlighter-rouge">add5</code>都是闭包，她们满足：分别拥有函数<code class="highlighter-rouge">function(b){return 3+b;}</code>和<code class="highlighter-rouge">function(b){return 5+b;}</code>；拥有不同的环境变量，<code class="highlighter-rouge">a＝3</code>和<code class="highlighter-rouge">a＝5</code>。</p>
+
+<p><strong>总结：闭包在父函数的外部，可以改变父函数内部的值。</strong></p>
+
+<h2 id="section-1">闭包的用途</h2>
+<p>在我的理解来看，闭包就是函数提供一种对外的方法去查看或修改其内部的变量。这种情形听上去是不是很熟悉？对，就像java中的类提供一个public方法供别人查看或修改他的私有变量。我用闭包写一个售票处的例子来展示一下。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	//这个function代表售票处的模型
+	function makeTicketOffice(num){
+		//余票数量，内部私有
+		var ticketsNum = num;
+		//更新余票数量
+		function updateNum(val){
+			ticketsNum += val;
+		}
+
+		return {
+			//对外提供的方法售票，即余票数减一
+			sellTicket : function(){
+				updateNum(-1);
+			},
+			//对外提供的方法退票，即余票数加一
+			returnTicket : function(){
+				updateNum(1);
+			},
+			//对外提供的方法查看余票数
+			showTicketsNum : function(){
+				alert(ticketsNum);
+			}
+		}
+	}
+	
+	
+	var ticketOffice = makeTicketOffice(100);
+	ticketOffice.showTicketsNum();//100
+	ticketOffice.sellTicket();
+	ticketOffice.sellTicket();
+	ticketOffice.showTicketsNum();//98
+	ticketOffice.returnTicket();
+	ticketOffice.showTicketsNum();//99
+</code></pre>
+</div>
+
+<p>在这个栗子中，售票处模型相当于一个java类，具有局部变量余票数，和更新余票数的私有方法。他提供了三个对外的方法，也就是三个闭包，分别可以余票数加一（即买票）、余票数减一（即退票）、展示余票数（alert余票数）。<code class="highlighter-rouge">ticketOffice</code>相当于售票处类的一个实例，可以执行对外的方法，改变其内部的余票数变量。</p>
+
+<h2 id="section-2">闭包容易理解错的地方</h2>
+<p>通过以上，可以得出结论，闭包其实就是变量和作用域的问题，再看我之前对闭包组成的定义：1、函数；2、创建函数时的环境，即创建闭包时所在作用域的局部变量。注意第二点创建闭包时所在作用域的局部变量，这是闭包容易理解错的地方。看栗子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	var message = "this is window";
+	var object = {
+		message : "this is object",
+		getMessage : function(){
+			return this.message;
+		};
+	};
+	alert(object.getMessage());//this is object
+</code></pre>
+</div>
+
+<p>这段代码应该没什么疑问，<code class="highlighter-rouge">getMessage</code>是一个闭包，是<code class="highlighter-rouge">object</code>提供的查看其内部变量<code class="highlighter-rouge">message</code>的方法；再看下个栗子：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	var message = "this is window";
+	var object = {
+		message : "this is object",
+		getMessage : function(){
+					   return function(){
+						  return this.message;
+					 		    };
+					 	 }
+		}
+	alert(object.getMessage()());//this is window
+</code></pre>
+</div>
+
+<p>对上面的代码稍微修改了一下，<code class="highlighter-rouge">getMessage</code>依然是一个闭包，为什么执行结果变了呢？因为作用域变了啊。且看第一个栗子，<code class="highlighter-rouge">getMessage</code>返回了<code class="highlighter-rouge">this.message</code>,这个代码是在<code class="highlighter-rouge">object</code>内部执行的，<code class="highlighter-rouge">this</code>代表的是在<code class="highlighter-rouge">object</code>内部的作用域，所以<code class="highlighter-rouge">message</code>当然是<code class="highlighter-rouge">this is object</code>了；再看第二个栗子，<code class="highlighter-rouge">getMessage</code>返回的是一个function哦，这个function就是<code class="highlighter-rouge"><span class="p">{</span><span class="w"> </span><span class="err">return</span><span class="w"> </span><span class="err">this.message;</span><span class="p">}</span></code>，这个function返回到哪里了，window中啊，因为<code class="highlighter-rouge">alert(object.getMessage()())</code>在window中啊，所以不就是在window中执行</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	alert(function(){return this.message;}())
+</code></pre>
+</div>
+
+<p>么，this这时候代表的是window这个作用域，执行结果当然是<code class="highlighter-rouge">this is window</code>了。</p>
+
+<h2 id="section-3">使用闭包的一个经典错误</h2>
+<p>使用闭包的经典错误莫过于在循环中创建闭包了，看代码：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	var list = document.getElementById("list");
+
+	for (var i = 1; i &lt;= 5; i++) {
+		var item = document.createElement("LI");
+		item.appendChild(document.createTextNode("Item " + i));
+		item.onclick = function (ev) {
+			alert("this is Item " + i);
+		};
+		list.appendChild(item);
+	}
+</code></pre>
+</div>
+
+<p>这段代码原本是想创建5个<code class="highlighter-rouge">li</code>，点击每行会弹出每行相应的文本内容，然而执行代码在页面中创建5个<code class="highlighter-rouge">li</code>后，点击每行均弹出Item 6，不是预想的Item 1,Item 2、、、Item 5啊，这是因为i是全局的，for循环虽然制造出了5个点击弹出的函数，但是她们共享变量i，在点击生成的每一行时，for循环已经执行完毕，i已经变成6了（虽然i＝6时已经不进入循环内了，但是在全局中还是增加了），所以当然弹出的都是一样的<code class="highlighter-rouge">this is Item 6</code>了，<strong>还是作用域的问题啊!</strong>
+既然是作用域的问题，那我们不就可以改进了吗，让每个弹出函数不共享i不就行了吗？于是代码修改如下：</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	var list = document.getElementById("list");
+
+	for (var i = 1; i &lt;= 5; i++) {
+		var item = document.createElement("LI");
+		item.appendChild(document.createTextNode("Item " + i));
+		item.onclick = showMessage(i);
+		list.appendChild(item);
+	}
+	
+	function showMessage(index){
+		return function (ev) {
+			alert("this is Item " + index);
+		};
+	}
+</code></pre>
+</div>
+
+<p>执行代码后，点击每行，正确弹出了this is Item 1、this is Item 2。。。等等。分析一下，上面的代码循环内依然每次新建一个点击弹出的函数，但是每个弹出的函数都自己独享一个i了（也就是index），<code class="highlighter-rouge">showMessage</code>内部和全局不是一个作用域了，弹出的函数拥有的index变量在for循环中依次被传进来自己独享了，每个都拥有自己的index变量，这样点击就能得到想要的效果了。（感觉自己完全是在说作用域了。。。所以闭包就是作用域！）</p>
+
+<p>（2016.04.28更新，增加let关键字内容和闭包性能内容）</p>
+
+<h2 id="let">let关键字</h2>
+
+<p>今天了解到javascript1.7新增了<strong>let</strong>关键字，为什么拿到闭包这里讲呢？因为他跟作用域息息相关，<strong>let声明了一个块级域的本地变量</strong>，并且可以同时初始化该变量。 什么是块级域？我们平时见到的域不外乎全局的和函数级的，而一个花括号里面就算块级域，例如for循环或者if判断，具体的let我就不介绍了，主要是上面生成li点击弹出的栗子，let关键字也可以解决问题。</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>	var list = document.getElementById("list");
+
+	for (var i = 1; i &lt;= 5; i++) {
+		var item = document.createElement("LI");
+		item.appendChild(document.createTextNode("Item " + i));
+		let j = i;
+		item.onclick = function (ev) {
+			alert("this is Item " + j);
+		};
+		list.appendChild(item);
+	}	
+</code></pre>
+</div>
+
+<p>在上面的代码中，let关键字定义了变量j,这个j不属于全局作用域了，只属于for循环内部，即块级域，所以每个点击弹出的函数独享自己的j，执行代码成功得到想要的效果。不过悲剧的是，<strong>目前不是所有的浏览器都对let支持</strong>，我用谷歌浏览器（而且应该有最低版本要求，我的比较新）是可以的，在Safari浏览器中就直接报语法错误了,再等等吧唉。</p>
+
+<h2 id="section-4">闭包对浏览器性能的影响</h2>
+<p>闭包对浏览器的性能是有负面影响的，因为使用闭包时总是要增加保存变量，增加内存消耗和CPU占用。所以当页面已经比较复杂时，要谨慎选择使用闭包。</p>
+
+<h2 id="section-5">总结</h2>
+
+<ul>
+  <li>闭包可以理解为对象内部提供的一种公有方法，以修改对象内部私有变量的方法，闭包在对象外部，可以修改对象内部的变量（这里与上文中说的闭包在函数外部不一样，但函数也是对象的一种）。闭包由（1、函数；2、闭包创建时所在作用域的局部变量。）组成。</li>
+  <li>闭包主要和js的作用域有关，理解了作用域，就容易理解闭包了。</li>
+  <li>闭包影响浏览器性能，谨慎使用。</li>
+</ul>
+
+
+ <p>温馨提示：***如果转载，请注明作者<strong>  Hurui </strong>，谢谢～_～。***</p>
+</div>
+
+<div class="about">
+    <div class="about__devider">*****</div>
+    <div class="about__text">
+        Written by <strong>  Hurui </strong>
+        on <strong>27 April 2016</strong>
+    </div>
+</div>
+
+
+<!-- UY BEGIN -->
+<div id="uyan_frame"></div>
+<script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2096727"></script>
+<!-- UY END -->
+        </div>
+
+        <script src="/assets/vendor/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+        
+    </body>
+</html>
