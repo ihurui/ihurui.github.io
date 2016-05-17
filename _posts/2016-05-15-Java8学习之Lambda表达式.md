@@ -58,13 +58,16 @@ public class Java8Tester {
 }
 ```
 在idea和jdk1.8环境下测试结果如下：
-```
+
 	3+4 =7
 	5-1 =4
 	3*4 =12
 	15/3 =5
-this is message:hello world
-```
+	this is message:hello world
+
+
+
+
 ## 三、总结
 * **lambda表达式主要用于定义内联执行的功能的接口，即只有一个单一的方法接口。在上面的例子中，我们使用不同类型的lambda表达式定义MathOperation接口的operate方法。然后，我们定义PrintMessage的print实现**
 * **Lambda表达式消除匿名类的需求，并给出了一个非常简单但功能强大的函数式编程能力。**
